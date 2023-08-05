@@ -19,4 +19,13 @@ li {
 
 img {
    display: block;
+   width: 100%;
+}
+
+button{
+   display: block;
+   outline: unset;
+   border: unset;
+   background-color: transparent;
+   cursor: pointer;
 }
