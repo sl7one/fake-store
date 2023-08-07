@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getProductsAPI } from './ProductsOperations';
+import { addProductsAPI, getProductsAPI } from './ProductsOperations';
 
 export const useProductsStore = create((set, get) => ({
    products: [],
@@ -16,7 +16,21 @@ export const useProductsStore = create((set, get) => ({
          set({ isLoading: false });
       }
    },
-
+   addProduct: async (product) => {
+      set({ isLoading: true });
+      try {
+         const products = get().products
+         const data = await addProductsAPI(product);
+         products.push(data)
+         set({
+            products: [...products],
+         });
+      } catch (e) {
+         console.log(e.message);
+      } finally {
+         set({ isLoading: false });
+      }
+   },
    setIsChoosed: (id) => {
       const products = get().products;
       const choosedProducts = get().choosedProducts;
@@ -27,6 +41,14 @@ export const useProductsStore = create((set, get) => ({
       const idx = choosedProducts.findIndex((el) => el.id === id);
 
       item.isChoosed ? choosedProducts.push(item) : choosedProducts.splice(idx, 1);
+      !item.isChoosed &&
+         choosedProducts.map((el) => {
+            if (el.id === id) {
+               const { count, ...rest } = el;
+               return rest;
+            }
+            return el;
+         });
 
       set({
          products: updatedProducts,
@@ -39,5 +61,36 @@ export const useProductsStore = create((set, get) => ({
          el.id === id ? { ...el, rating: { ...el.rating, rate: value } } : el
       );
       set({ products: updatedProducts });
+   },
+   setCountIncrement: (id) => {
+      const choosedList = get().choosedProducts;
+      const updatedChoosedProducts = choosedList.map((el) => {
+         const count = !el.count && el.count !== 0;
+         return el.id === id ? { ...el, count: count ? 1 : el.count + 1 } : el;
+      });
+
+      set({
+         choosedProducts: [...updatedChoosedProducts],
+      });
+   },
+   setCountDecrement: (id) => {
+      const choosedList = get().choosedProducts;
+      const updatedChoosedProducts = choosedList.map((el) =>
+         el.id === id ? { ...el, count: el.count ? el.count - 1 : 0 } : el
+      );
+      set({
+         choosedProducts: [...updatedChoosedProducts],
+      });
+   },
+   onChangeCount: (id, count) => {
+      console.log(+count);
+      const choosedList = get().choosedProducts;
+      const updatedChoosedProducts = choosedList.map((el) =>
+         el.id === id ? { ...el, count: +count } : el
+      );
+
+      set({
+         choosedProducts: [...updatedChoosedProducts],
+      });
    },
 }));
