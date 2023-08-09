@@ -19,9 +19,9 @@ export const useProductsStore = create((set, get) => ({
    addProduct: async (product) => {
       set({ isLoading: true });
       try {
-         const products = get().products
+         const products = get().products;
          const data = await addProductsAPI(product);
-         products.push(data)
+         products.push(data);
          set({
             products: [...products],
          });
@@ -35,20 +35,21 @@ export const useProductsStore = create((set, get) => ({
       const products = get().products;
       const choosedProducts = get().choosedProducts;
       const updatedProducts = products.map((el) =>
-         el.id === id ? { ...el, isChoosed: !el.isChoosed } : el
+         el.id === id ? { ...el, isChoosed: !el.isChoosed, isInCart: false } : el
       );
       const item = updatedProducts.find((el) => el.id === id);
       const idx = choosedProducts.findIndex((el) => el.id === id);
 
       item.isChoosed ? choosedProducts.push(item) : choosedProducts.splice(idx, 1);
-      !item.isChoosed &&
-         choosedProducts.map((el) => {
-            if (el.id === id) {
-               const { count, ...rest } = el;
-               return rest;
-            }
-            return el;
-         });
+      // !item.isChoosed &&
+      //    choosedProducts.map((el) => {
+      //       if (el.id === id) {
+      //          const { count, ...rest } = el;
+      //          return rest;
+      //       }
+      //       return el;
+      //    });
+
 
       set({
          products: updatedProducts,
@@ -89,6 +90,15 @@ export const useProductsStore = create((set, get) => ({
          el.id === id ? { ...el, count: +count } : el
       );
 
+      set({
+         choosedProducts: [...updatedChoosedProducts],
+      });
+   },
+   setItemToBuy: (id) => {
+      const choosedList = get().choosedProducts;
+      const updatedChoosedProducts = choosedList.map((el) =>
+         el.id === id ? { ...el, isInCart: true } : el
+      );
       set({
          choosedProducts: [...updatedChoosedProducts],
       });

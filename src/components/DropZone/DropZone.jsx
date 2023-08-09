@@ -4,10 +4,21 @@ import 'swiper/css/scrollbar';
 import 'swiper/css/navigation';
 import { Button } from '../Button/Button';
 import { Icon } from '../Icon/Icon';
-import { forwardRef, useEffect, useRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
+import { colors } from '../../utils/colors';
 
 export const DropZone = forwardRef(
-   ({ list, onClickClose, setCountIncrement, setCountDecrement, onChangeCount }, ref) => {
+   (
+      {
+         list,
+         onClickDelete,
+         setCountIncrement,
+         setCountDecrement,
+         onChangeCount,
+         onClickBuy,
+      },
+      ref
+   ) => {
       const swiper = useRef(null);
       const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -15,25 +26,40 @@ export const DropZone = forwardRef(
          setCurrentSlide(swiper.current.swiper.activeIndex);
       }, [list.length]);
 
-      const onClick = () => {
-         // console.log(swiper.current.swiper.activeIndex);
-         // console.log(swiper.current.swiper.slides.length);
-      };
-
-      const onClickPrevArrow = () => {
+      const onClickPrevArrow = useCallback(() => {
          swiper.current.swiper.slidePrev();
          setCurrentSlide(swiper.current.swiper.activeIndex);
-      };
-      const onClickNextArrow = () => {
+      }, []);
+
+      const onClickNextArrow = useCallback(() => {
          swiper.current.swiper.slideNext();
          setCurrentSlide(swiper.current.swiper.activeIndex);
-      };
-      const onClickPlus = (id) => {
-         setCountIncrement(id);
-      };
-      const onClickMinus = (id) => {
-         setCountDecrement(id);
-      };
+      }, []);
+
+      const onClickPlus = useCallback(
+         (id) => {
+            setCountIncrement(id);
+         },
+         [setCountIncrement]
+      );
+
+      const onClickMinus = useCallback(
+         (id) => {
+            setCountDecrement(id);
+         },
+         [setCountDecrement]
+      );
+
+      const onClickBuyButton = useCallback(
+         (id) => {
+            onClickBuy(id);
+            onClickNextArrow();
+         },
+         [onClickBuy, onClickNextArrow]
+      );
+
+      // console.log("dropzone",list)
+
 
       return (
          <div
@@ -46,8 +72,9 @@ export const DropZone = forwardRef(
                slidesPerView={1}
                className="dropzone__list"
                rewind
+               initialSlide={2}
             >
-               {list.map(({ id, image, title, description, count, price }) => (
+               {list.map(({ id, image, title, description, count, price, isInCart }) => (
                   <SwiperSlide
                      key={id}
                      className="dropzone__item"
@@ -61,7 +88,7 @@ export const DropZone = forwardRef(
                         <p>{description}</p>
                         <div className="custom-navigation">
                            <Button
-                              onClick={() => onClickClose(id)}
+                              onClick={() => onClickDelete(id)}
                               className="close"
                            >
                               <Icon
@@ -102,18 +129,28 @@ export const DropZone = forwardRef(
                      <div className="buy-button">
                         <div className="bag-button">
                            <Button
-                              onClick={onClick}
+                              onClick={()=>onClickBuyButton(id)}
                               className="bag"
                            >
-                              <Icon
-                                 name="bag"
-                                 fill="red"
-                                 width={100}
-                                 height={100}
-                              />
+                              <div className="bag__top">
+                                 <Icon
+                                    name="bag"
+                                    fill="red"
+                                    width={100}
+                                    height={100}
+                                 />
+                                 <span>{price}$</span>
+                              </div>
+                              <div
+                                 className={
+                                    isInCart
+                                       ? `bag__bottom ${colors["women's clothing"]}`
+                                       : 'bag__bottom'
+                                 }
+                              >
+                                 {isInCart ? 'In CART' : 'Add to product cart'}
+                              </div>
                            </Button>
-                           <span>{price}$</span>
-                           <p>Add to cart</p>
                         </div>
 
                         <div className="counter">

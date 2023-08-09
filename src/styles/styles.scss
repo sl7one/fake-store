@@ -12,6 +12,7 @@
    gap: 5px;
    align-items: flex-end;
    z-index: 15;
+   max-width: 100px;
 
    button {
       padding: 10px;
@@ -20,12 +21,37 @@
       border: 1px solid red;
       transition: background-color 350ms ease-in-out;
 
-      &:nth-of-type(1) {
-         width: 70%;
-      }
-
       &:hover {
          background-color: rgb(236, 236, 236);
+      }
+   }
+
+   div {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      position: relative;
+
+      span {
+         padding: 10px;
+         text-align: center;
+
+         display: block;
+         background-color: greenyellow;
+         width: 100%;
+         height: 100%;
+         border: 1px solid greenyellow;
+
+         position: relative;
+         z-index: -1;
+         bottom: 0;
+         left: 0;
+         transform: translateX(100%);
+         transition: transform 350ms ease-in-out;
+      }
+
+      .count-visible{
+         transform: translateX(0);
       }
    }
 }
@@ -215,14 +241,12 @@
    &__list {
       display: flex;
       align-items: center;
-      // width: 50%; // height: 240px;
    }
 
    &__item {
       display: flex !important;
       justify-content: center;
       gap: 15px;
-      // width: 100px;
       height: 100%;
 
       img {
@@ -230,11 +254,6 @@
          height: 100%;
          object-position: 50% 50%;
          object-fit: contain;
-      }
-
-      p {
-         margin-top: 10px;
-         // overflow-y: scroll;
       }
    }
 
@@ -261,24 +280,6 @@
             transform 350ms ease-in-out,
             background-color 350ms ease-in-out;
 
-         &:hover {
-            background-color: rgb(224, 224, 224);
-
-            .bag {
-               transform: translateX(-50px);
-            }
-
-            span {
-               opacity: 0;
-            }
-
-            p {
-               opacity: 1;
-               transform: translate(0, -50%);
-               pointer-events: none;
-            }
-         }
-
          span {
             font-size: 14px;
             font-weight: 700;
@@ -292,25 +293,49 @@
                opacity 350ms ease-in-out;
          }
 
+         &:hover {
+            background-color: rgb(224, 224, 224);
+
+            .bag__top {
+               transform: translateY(-100%);
+            }
+
+            .bag__bottom {
+               // background-color: yellowgreen;
+               transform: translateY(-100%);
+            }
+         }
+
          .bag {
+            position: relative;
+            overflow-y: hidden;
             padding: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
+
             height: 100%;
             width: 100%;
             transition: transform 350ms ease-in-out;
          }
 
-         p {
+         .bag__top {
+            width: 100%;
+            height: 100%;
+            transition: transform 350ms ease-in-out;
+         }
+         .bag__bottom {
+            width: 100%;
+            height: 100%;
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(50%, -50%);
-            opacity: 0;
-            transition:
-               opacity 350ms ease-in-out,
-               transform 350ms ease-in-out;
+            top: 100%;
+            left: 0;
+            transform: translateY(50%);
+            transition: transform 350ms ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
          }
       }
 
@@ -494,18 +519,17 @@
          height: 253px;
          resize: none;
       }
-
    }
    &__preview {
       width: 50%;
 
-      .add-product-dropzone{
+      .add-product-dropzone {
          height: 100%;
          display: flex;
          align-items: center;
          justify-content: center;
 
-         .dnd-file{
+         .dnd-file {
             height: 412px;
             display: flex;
             align-items: center;
@@ -514,27 +538,30 @@
          }
       }
    }
-   &__buttons{
+   &__buttons {
       display: flex;
       gap: 10px;
       width: 80%;
 
-      button{
+      button {
          width: 50%;
          font-size: inherit;
          padding: 15px;
          background-color: rgb(236, 236, 236);
          transition: background-color 350ms ease-in-out;
 
-         &:hover{
+         &:hover {
             background-color: rgb(224, 224, 224);
          }
 
-         &:nth-of-type(1){
+         &:nth-of-type(1) {
             width: 47%;
          }
-
       }
-
    }
+}
+
+.modal-cart{
+   padding: 20px;
+   background-color: white;
 }

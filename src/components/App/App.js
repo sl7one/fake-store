@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Header } from '../Header/Header';
 import { useCategoriesStore } from '../../store/Categories/CategoriesStore';
 import { useProductsStore } from '../../store/Products/ProductsStore';
@@ -6,14 +6,19 @@ import { Products } from '../Products/Products';
 import { DropZone } from '../DropZone/DropZone';
 import { AddProduct } from '../Modals/AddProduct';
 import { Cart } from '../Modals/Cart';
+import { Aside } from '../Aside/Aside';
 
 export const App = () => {
    const dropzone = useRef(null);
    const overlayRef = useRef(null);
-   const { getAllCategories, categories, isLoading: isLoadingCategores } = useCategoriesStore((state) => ({
+   const {
+      getAllCategories,
+      categories,
+      isLoading: isLoadingCategores,
+   } = useCategoriesStore((state) => ({
       getAllCategories: state.getAllCategories,
       categories: state.categories,
-      isLoading: state.isLoading
+      isLoading: state.isLoading,
    }));
    const {
       getAllProducts,
@@ -25,6 +30,7 @@ export const App = () => {
       setCountIncrement,
       setCountDecrement,
       onChangeCount,
+      setItemToBuy,
    } = useProductsStore((state) => ({
       getAllProducts: state.getAllProducts,
       addProduct: state.addProduct,
@@ -35,64 +41,70 @@ export const App = () => {
       setCountIncrement: state.setCountIncrement,
       setCountDecrement: state.setCountDecrement,
       onChangeCount: state.onChangeCount,
+      setItemToBuy: state.setItemToBuy,
    }));
-   // const [transition, setTransition] = useState(false);
 
    useEffect(() => {
       getAllCategories();
       getAllProducts();
    }, [getAllCategories, getAllProducts]);
 
+   useEffect(()=>{
+      choosedProducts.length === 0
+      ? dropzone.current.classList.add('hidden')
+      : dropzone.current.classList.remove('hidden');
+   },[choosedProducts.length])
+
    const onClickProduct = useCallback(
       (id) => {
          setIsChoosed(id);
-         choosedProducts.length === 0
-            ? dropzone.current.classList.add('hidden')
-            : dropzone.current.classList.remove('hidden');
       },
-      [setIsChoosed, choosedProducts.length]
+      [setIsChoosed]
    );
 
-   const onClickStars = (id, value) => {
-      setNewRating(id, value);
-   };
+   const onClickStars = useCallback(
+      (id, value) => setNewRating(id, value),
+      [setNewRating]
+   );
+   const onClickDelete = useCallback((id) => onClickProduct(id), [onClickProduct]);
 
-   const onClickClose = (id) => {
-      onClickProduct(id);
-   };
-
-   const onClickModalAddProduct = () => {
+   const onClickModalAddProduct = useCallback(() => {
       if (overlayRef.current.classList.contains('visible')) return;
       overlayRef.current.classList.add('visible');
-   };
-   const onClickModalCart = () => {
+   }, []);
+
+   const onClickModalCart = useCallback(() => {
       if (overlayRef.current.classList.contains('visible')) return;
       overlayRef.current.classList.add('visible');
-   };
+   }, []);
 
-   const onClickBackDrop = (e) => {
+   const onClickBackDrop = useCallback((e) => {
       const { target, currentTarget } = e;
       if (target === currentTarget) overlayRef.current.classList.remove('visible');
-   };
+   }, []);
 
-   const onTransitionEnd = () => {
-      console.log('object');
-   };
+   const onClickBuy = useCallback(
+      (id) => {
+         setItemToBuy(id);
+      },
+      [setItemToBuy]
+   );
 
-   // const onAnimationStart = () => {
-   //    console.log('object');
-   // };
+   const countItems = useMemo(
+      () => choosedProducts.filter(({ isInCart }) => isInCart).length,
+      [choosedProducts]
+   );
 
-   //  console.log({ categories, products });
 
    return (
       <>
          <Header list={categories} />
          <main>
-            <aside className="aside">
-               <button onClick={onClickModalAddProduct}>Add product</button>
-               <button onClick={onClickModalCart}>Cart</button>
-            </aside>
+            <Aside
+               onClickModalAddProduct={onClickModalAddProduct}
+               onClickModalCart={onClickModalCart}
+               countItems={countItems}
+            />
             <section className="container">
                <Products
                   list={products}
@@ -104,10 +116,11 @@ export const App = () => {
                <DropZone
                   ref={dropzone}
                   list={choosedProducts}
-                  onClickClose={onClickClose}
+                  onClickDelete={onClickDelete}
                   setCountIncrement={setCountIncrement}
                   setCountDecrement={setCountDecrement}
                   onChangeCount={onChangeCount}
+                  onClickBuy={onClickBuy}
                />
             </section>
             <section>
@@ -115,15 +128,14 @@ export const App = () => {
                   className="overlay"
                   ref={overlayRef}
                   onClick={onClickBackDrop}
-                  onTransitionEnd={onTransitionEnd}
                >
-                  <AddProduct
+                  {/* <AddProduct
                      onClickClose={onClickBackDrop}
                      categories={categories}
                      isLoading={isLoadingCategores}
                      addProduct={addProduct}
-                  />
-                  <Cart />
+                  /> */}
+                  <Cart list={choosedProducts} categories={categories}/>
                </div>
             </section>
          </main>
