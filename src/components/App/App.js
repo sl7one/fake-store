@@ -4,7 +4,7 @@ import { useCategoriesStore } from '../../store/Categories/CategoriesStore';
 import { useProductsStore } from '../../store/Products/ProductsStore';
 import { Products } from '../Products/Products';
 import { DropZone } from '../DropZone/DropZone';
-import { AddProduct } from '../Modals/AddProduct';
+// import { AddProduct } from '../Modals/AddProduct';
 import { Cart } from '../Modals/Cart';
 import { Aside } from '../Aside/Aside';
 
@@ -14,7 +14,7 @@ export const App = () => {
    const {
       getAllCategories,
       categories,
-      isLoading: isLoadingCategores,
+      // isLoading: isLoadingCategores,
    } = useCategoriesStore((state) => ({
       getAllCategories: state.getAllCategories,
       categories: state.categories,
@@ -22,7 +22,7 @@ export const App = () => {
    }));
    const {
       getAllProducts,
-      addProduct,
+      // addProduct,
       products,
       setIsChoosed,
       setNewRating,
