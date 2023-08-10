@@ -6,6 +6,7 @@ import { Button } from '../Button/Button';
 import { Icon } from '../Icon/Icon';
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { colors } from '../../utils/colors';
+import { Notify } from 'notiflix';
 
 export const DropZone = forwardRef(
    (
@@ -51,15 +52,16 @@ export const DropZone = forwardRef(
       );
 
       const onClickBuyButton = useCallback(
-         (id) => {
+         (id, count) => {
+            if (!count) {
+               Notify.warning('Set count');
+               return;
+            }
             onClickBuy(id);
             onClickNextArrow();
          },
          [onClickBuy, onClickNextArrow]
       );
-
-      // console.log("dropzone",list)
-
 
       return (
          <div
@@ -129,7 +131,7 @@ export const DropZone = forwardRef(
                      <div className="buy-button">
                         <div className="bag-button">
                            <Button
-                              onClick={()=>onClickBuyButton(id)}
+                              onClick={() => onClickBuyButton(id, count)}
                               className="bag"
                            >
                               <div className="bag__top">

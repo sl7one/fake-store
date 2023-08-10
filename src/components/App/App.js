@@ -8,13 +8,15 @@ import { DropZone } from '../DropZone/DropZone';
 import { Cart } from '../Modals/Cart';
 import { Aside } from '../Aside/Aside';
 
+import { Loading } from 'notiflix/build/notiflix-loading-aio';
+
 export const App = () => {
    const dropzone = useRef(null);
    const overlayRef = useRef(null);
    const {
       getAllCategories,
       categories,
-      // isLoading: isLoadingCategores,
+      isLoading: isLoadingCategores,
    } = useCategoriesStore((state) => ({
       getAllCategories: state.getAllCategories,
       categories: state.categories,
@@ -31,6 +33,7 @@ export const App = () => {
       setCountDecrement,
       onChangeCount,
       setItemToBuy,
+      isLoading: isLoadingProducts,
    } = useProductsStore((state) => ({
       getAllProducts: state.getAllProducts,
       addProduct: state.addProduct,
@@ -42,6 +45,7 @@ export const App = () => {
       setCountDecrement: state.setCountDecrement,
       onChangeCount: state.onChangeCount,
       setItemToBuy: state.setItemToBuy,
+      isLoading: state.isLoading,
    }));
 
    useEffect(() => {
@@ -49,11 +53,12 @@ export const App = () => {
       getAllProducts();
    }, [getAllCategories, getAllProducts]);
 
-   useEffect(()=>{
+   useEffect(() => {
       choosedProducts.length === 0
-      ? dropzone.current.classList.add('hidden')
-      : dropzone.current.classList.remove('hidden');
-   },[choosedProducts.length])
+         ? dropzone.current.classList.add('hidden')
+         : dropzone.current.classList.remove('hidden');
+      dropzone.current.children[0].swiper.slideTo(choosedProducts.length );
+   }, [choosedProducts.length]);
 
    const onClickProduct = useCallback(
       (id) => {
@@ -66,6 +71,7 @@ export const App = () => {
       (id, value) => setNewRating(id, value),
       [setNewRating]
    );
+
    const onClickDelete = useCallback((id) => onClickProduct(id), [onClickProduct]);
 
    const onClickModalAddProduct = useCallback(() => {
@@ -90,11 +96,12 @@ export const App = () => {
       [setItemToBuy]
    );
 
-   const countItems = useMemo(
-      () => choosedProducts.filter(({ isInCart }) => isInCart).length,
+   const choosedProductsInCart = useMemo(
+      () => choosedProducts.filter(({ isInCart }) => isInCart),
       [choosedProducts]
    );
 
+   isLoadingCategores || isLoadingProducts ? Loading.pulse() : Loading.remove();
 
    return (
       <>
@@ -103,7 +110,7 @@ export const App = () => {
             <Aside
                onClickModalAddProduct={onClickModalAddProduct}
                onClickModalCart={onClickModalCart}
-               countItems={countItems}
+               countItems={choosedProductsInCart.length}
             />
             <section className="container">
                <Products
@@ -135,7 +142,7 @@ export const App = () => {
                      isLoading={isLoadingCategores}
                      addProduct={addProduct}
                   /> */}
-                  <Cart list={choosedProducts} categories={categories}/>
+                  <Cart list={choosedProductsInCart} />
                </div>
             </section>
          </main>
