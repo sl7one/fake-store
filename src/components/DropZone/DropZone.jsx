@@ -22,9 +22,12 @@ export const DropZone = forwardRef(
    ) => {
       const swiper = useRef(null);
       const [currentSlide, setCurrentSlide] = useState(0);
+      const [listLength, setListLength] = useState(list.length);
+
 
       useEffect(() => {
-         setCurrentSlide(swiper.current.swiper.activeIndex);
+         // console.log(swiper.current.swiper.activeIndex, swiper.current.swiper.realIndex)
+         setCurrentSlide(list.length-1);
       }, [list.length]);
 
       const onClickPrevArrow = useCallback(() => {
@@ -112,7 +115,7 @@ export const DropZone = forwardRef(
                               />
                            </Button>
                            <div>
-                              <span>{currentSlide + 1}</span>
+                              <span>{currentSlide +1}</span>
                               <span>/{'   ' + list.length}</span>
                            </div>
                            <Button
