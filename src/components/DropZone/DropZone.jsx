@@ -22,11 +22,9 @@ export const DropZone = forwardRef(
    ) => {
       const swiper = useRef(null);
       const [currentSlide, setCurrentSlide] = useState(0);
-      const [listLength, setListLength] = useState(list.length);
 
 
       useEffect(() => {
-         // console.log(swiper.current.swiper.activeIndex, swiper.current.swiper.realIndex)
          setCurrentSlide(list.length-1);
       }, [list.length]);
 
