@@ -1,0 +1,32 @@
+* {
+  box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+body,
+ul,
+li,
+p {
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  list-style: none;
+}
+
+img {
+  display: block;
+  width: 100%;
+}
+
+button {
+  display: block;
+  outline: unset;
+  border: unset;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 0;
+}/*# sourceMappingURL=reset.css.map */

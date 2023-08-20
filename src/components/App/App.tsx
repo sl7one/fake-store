@@ -4,27 +4,26 @@ import { useCategoriesStore } from '../../store/Categories/CategoriesStore';
 import { useProductsStore } from '../../store/Products/ProductsStore';
 import { Products } from '../Products/Products';
 import { DropZone } from '../DropZone/DropZone';
-// import { AddProduct } from '../Modals/AddProduct';
 import { Cart } from '../Modals/Cart';
 import { Aside } from '../Aside/Aside';
 
 import { Loading } from 'notiflix/build/notiflix-loading-aio';
+import { ICategories, IProducts } from '../../interfaces/interface';
 
 export const App = () => {
-   const dropzone = useRef(null);
-   const overlayRef = useRef(null);
+   const dropzone = useRef<HTMLInputElement | any>(null);
+   const overlayRef = useRef<HTMLInputElement>(null);
    const {
       getAllCategories,
       categories,
       isLoading: isLoadingCategores,
-   } = useCategoriesStore((state) => ({
+   }: ICategories = useCategoriesStore((state) => ({
       getAllCategories: state.getAllCategories,
       categories: state.categories,
       isLoading: state.isLoading,
    }));
    const {
       getAllProducts,
-      // addProduct,
       products,
       setIsChoosed,
       setNewRating,
@@ -34,7 +33,7 @@ export const App = () => {
       onChangeCount,
       setItemToBuy,
       isLoading: isLoadingProducts,
-   } = useProductsStore((state) => ({
+   }: IProducts = useProductsStore((state) => ({
       getAllProducts: state.getAllProducts,
       addProduct: state.addProduct,
       products: state.products,
@@ -55,42 +54,49 @@ export const App = () => {
 
    useEffect(() => {
       choosedProducts.length === 0
-         ? dropzone.current.classList.add('hidden')
-         : dropzone.current.classList.remove('hidden');
-      dropzone.current.children[0].swiper.slideTo(choosedProducts.length );
+         ? dropzone.current?.classList.add('hidden')
+         : dropzone.current?.classList.remove('hidden');
+
+      if (dropzone.current?.children[0]?.swiper) {
+         dropzone.current.children[0].swiper.slideTo(choosedProducts.length);
+      }
+      // dropzone.current?.children[0].swiper.slideTo(choosedProducts.length);
    }, [choosedProducts.length]);
 
    const onClickProduct = useCallback(
-      (id) => {
+      (id: number) => {
          setIsChoosed(id);
       },
       [setIsChoosed]
    );
 
    const onClickStars = useCallback(
-      (id, value) => setNewRating(id, value),
+      (id: number, value: number) => setNewRating(id, value),
       [setNewRating]
    );
 
-   const onClickDelete = useCallback((id) => onClickProduct(id), [onClickProduct]);
+   const onClickDelete = useCallback(
+      (id: number) => onClickProduct(id),
+      [onClickProduct]
+   );
 
    const onClickModalAddProduct = useCallback(() => {
-      if (overlayRef.current.classList.contains('visible')) return;
-      overlayRef.current.classList.add('visible');
+      if (overlayRef.current?.classList.contains('visible')) return;
+      overlayRef.current?.classList.add('visible');
    }, []);
 
    const onClickModalCart = useCallback(() => {
-      if (overlayRef.current.classList.contains('visible')) return;
-      overlayRef.current.classList.add('visible');
+      if (overlayRef.current?.classList.contains('visible')) return;
+      overlayRef.current?.classList.add('visible');
    }, []);
 
-   const onClickBackDrop = useCallback((e) => {
+   const onClickBackDrop = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
       const { target, currentTarget } = e;
-      if (target === currentTarget) overlayRef.current.classList.remove('visible');
+      if (target === currentTarget) overlayRef.current?.classList.remove('visible');
    }, []);
 
    const onClickBuy = useCallback(
-      (id) => {
+      (id: number) => {
          setItemToBuy(id);
       },
       [setItemToBuy]

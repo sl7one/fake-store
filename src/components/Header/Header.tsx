@@ -1,6 +1,6 @@
-import { Navbar } from '../Navbar/Navbar';
+import { Navbar } from "../Navbar/Navbar";
 
-export const Header = ({ list }) => {
+export const Header = ({ list }: any) => {
    return (
       <header>
          <nav className="container">

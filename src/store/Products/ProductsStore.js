@@ -41,14 +41,6 @@ export const useProductsStore = create((set, get) => ({
       const idx = choosedProducts.findIndex((el) => el.id === id);
 
       item.isChoosed ? choosedProducts.push(item) : choosedProducts.splice(idx, 1);
-      // !item.isChoosed &&
-      //    choosedProducts.map((el) => {
-      //       if (el.id === id) {
-      //          const { count, ...rest } = el;
-      //          return rest;
-      //       }
-      //       return el;
-      //    });
 
 
       set({

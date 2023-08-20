@@ -1,10 +1,9 @@
 import { colors } from "../../utils/colors";
 
-export const Navbar = ({ list }) => {
-  
+export const Navbar = ({ list }: any) => {
    return (
       <ul className="nav__list">
-         {list.map((el) => (
+         {list.map((el: any) => (
             <li
                key={el}
                className={colors[el]}
@@ -15,3 +14,5 @@ export const Navbar = ({ list }) => {
       </ul>
    );
 };
+
+

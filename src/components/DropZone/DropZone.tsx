@@ -7,8 +7,18 @@ import { Icon } from '../Icon/Icon';
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { colors } from '../../utils/colors';
 import { Notify } from 'notiflix';
+import { ProductType } from '../../interfaces/interface';
 
-export const DropZone = forwardRef(
+type IProps = {
+   list: ProductType[];
+   onClickDelete: (id: number) => void;
+   setCountIncrement: (id: number) => void;
+   setCountDecrement: (id: number) => void;
+   onChangeCount: (id: number, value: string) => void;
+   onClickBuy: (id: number) => void;
+};
+
+export const DropZone = forwardRef<HTMLDivElement, IProps>(
    (
       {
          list,
@@ -17,15 +27,14 @@ export const DropZone = forwardRef(
          setCountDecrement,
          onChangeCount,
          onClickBuy,
-      },
+      }: IProps,
       ref
    ) => {
-      const swiper = useRef(null);
+      const swiper = useRef<HTMLDivElement | any>(null);
       const [currentSlide, setCurrentSlide] = useState(0);
 
-
       useEffect(() => {
-         setCurrentSlide(list.length-1);
+         setCurrentSlide(list.length - 1);
       }, [list.length]);
 
       const onClickPrevArrow = useCallback(() => {
@@ -39,25 +48,21 @@ export const DropZone = forwardRef(
       }, []);
 
       const onClickPlus = useCallback(
-         (id) => {
+         (id: number) => {
             setCountIncrement(id);
          },
          [setCountIncrement]
       );
 
       const onClickMinus = useCallback(
-         (id) => {
+         (id: number) => {
             setCountDecrement(id);
          },
          [setCountDecrement]
       );
 
       const onClickBuyButton = useCallback(
-         (id, count) => {
-            if (!count) {
-               Notify.warning('Set count');
-               return;
-            }
+         (id: number) => {
             onClickBuy(id);
             onClickNextArrow();
          },
@@ -113,7 +118,7 @@ export const DropZone = forwardRef(
                               />
                            </Button>
                            <div>
-                              <span>{currentSlide +1}</span>
+                              <span>{currentSlide + 1}</span>
                               <span>/{'   ' + list.length}</span>
                            </div>
                            <Button
@@ -132,7 +137,13 @@ export const DropZone = forwardRef(
                      <div className="buy-button">
                         <div className="bag-button">
                            <Button
-                              onClick={() => onClickBuyButton(id, count)}
+                              onClick={() => {
+                                 if (!count) {
+                                    Notify.warning('Set count');
+                                    return;
+                                 }
+                                 return onClickBuyButton(id);
+                              }}
                               className="bag"
                            >
                               <div className="bag__top">
